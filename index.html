@@ -1,0 +1,207 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yasmin Birthday Surprise 💜</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;min-height:100vh;overflow-x:hidden;
+ display:flex;align-items:center;justify-content:center;
+ padding:20px;color:white;text-align:center;
+ font-family:Arial,sans-serif;
+ background:radial-gradient(circle at top,#7026a5,#260642 45%,#090015);
+}
+#stars{position:fixed;inset:0;pointer-events:none}
+.star{position:absolute;color:#fff;animation:twinkle 2s infinite alternate}
+@keyframes twinkle{to{opacity:.15;transform:scale(.5)}}
+.card{
+ width:100%;max-width:650px;padding:35px 22px;
+ border:1px solid #e9baff66;border-radius:28px;
+ background:#ffffff12;backdrop-filter:blur(12px);
+ box-shadow:0 0 45px #a855f755;
+ position:relative;z-index:1;
+}
+h1{font-size:clamp(32px,8vw,58px);color:#f3c7ff;
+ text-shadow:0 0 25px #d946ef}
+h2{font-size:clamp(25px,6vw,36px);color:#f3c7ff}
+p{font-size:18px;line-height:1.8;color:#f7eaff}
+.gift{font-size:90px;animation:float 2.5s ease-in-out infinite}
+@keyframes float{
+ 0%,100%{transform:translateY(0) rotateY(-10deg)}
+ 50%{transform:translateY(-14px) rotateY(10deg)}
+}
+button{
+ border:0;border-radius:30px;padding:14px 24px;margin:8px;
+ font-size:16px;font-weight:bold;cursor:pointer;
+ color:#31094b;background:linear-gradient(90deg,#e9baff,#fbc2eb);
+ box-shadow:0 0 20px #d946ef44;
+}
+input{
+ width:100%;max-width:330px;padding:14px;
+ border-radius:15px;border:1px solid #d8a4ff;
+ background:#210c35;color:white;font-size:17px;
+ text-align:center;margin:15px 0;
+}
+.hidden{display:none!important}
+.progress{height:7px;background:#ffffff22;border-radius:10px;margin:20px 0}
+#bar{height:100%;width:12.5%;background:#f0abfc;border-radius:10px;transition:width .4s}
+#error{color:#ffb4c4}
+.confetti{position:fixed;top:-30px;z-index:5;animation:fall 4s linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:.2}}
+</style>
+</head>
+
+<body>
+<div id="stars"></div>
+
+<main class="card">
+<section id="login">
+ <div class="gift">🎁</div>
+ <h1>A Special Surprise</h1>
+ <p>A magical birthday journey awaits you.<br>
+ Enter the secret password to unlock all 8 surprises! 💜</p>
+ <form id="passwordForm">
+  <input id="password" type="password" placeholder="Enter Password" required>
+  <br>
+  <button type="submit">Unlock My Surprise ✨</button>
+ </form>
+ <p id="error"></p>
+ <small>Password hint: Yasmin</small>
+</section>
+
+<section id="birthday" class="hidden">
+ <p id="step">STEP 1 OF 8</p>
+ <div class="progress"><div id="bar"></div></div>
+ <div class="gift" id="emoji">🌟</div>
+ <h2 id="title"></h2>
+ <p id="message"></p>
+ <button id="next">Next Surprise ➜</button>
+ <button id="restart" class="hidden">Start Again ↻</button>
+</section>
+</main>
+
+<script>
+// Floating stars in the background
+const stars=document.getElementById("stars");
+for(let i=0;i<65;i++){
+ const s=document.createElement("span");
+ s.className="star";
+ s.textContent="✦";
+ s.style.left=Math.random()*100+"%";
+ s.style.top=Math.random()*100+"%";
+ s.style.fontSize=(8+Math.random()*15)+"px";
+ s.style.animationDelay=Math.random()*3+"s";
+ stars.appendChild(s);
+}
+
+// All 8 birthday surprise steps
+const surprises=[
+ {
+  emoji:"🌟",
+  title:"A Day Made to Shine",
+  message:"May your birthday sparkle with happiness, beautiful moments, and memories that make you smile for years to come."
+ },
+ {
+  emoji:"🎂",
+  title:"A Beautiful Birthday Wish",
+  message:"May every candle bring a new reason to smile, and may your special day be filled with laughter, warmth, and wonderful surprises."
+ },
+ {
+  emoji:"🦋",
+  title:"Dream Big, Shine Bright",
+  message:"May you always have the courage to follow your dreams, the confidence to believe in yourself, and the strength to achieve great things."
+ },
+ {
+  emoji:"🎁",
+  title:"A Box Full of Happiness",
+  message:"May life bring you unexpected blessings, exciting opportunities, kind moments, and countless little reasons to celebrate."
+ },
+ {
+  emoji:"🌈",
+  title:"A Colourful New Chapter",
+  message:"May the year ahead be full of colourful adventures, peaceful mornings, unforgettable experiences, and beautiful new beginnings."
+ },
+ {
+  emoji:"💎",
+  title:"Simply Extraordinary",
+  message:"Never stop being your unique and wonderful self. Keep smiling, keep growing, and let your inner sparkle brighten every room."
+ },
+ {
+  emoji:"🚀",
+  title:"Your Best Year Yet",
+  message:"May your goals become achievements, your efforts bring success, and every new day take you closer to the future you imagine."
+ },
+ {
+  emoji:"🎉",
+  title:"HAPPY BIRTHDAY JII",
+  message:"Wishing you endless happiness, good health, great success, and a year filled with magical memories. May all your beautiful dreams come true. Keep shining, keep smiling, and have the most amazing birthday ever! 🎂💜✨"
+ }
+];
+
+let current=0;
+
+document.getElementById("passwordForm").addEventListener("submit",function(e){
+ e.preventDefault();
+
+ const entered=document.getElementById("password").value.trim();
+
+ if(entered.toLowerCase()==="yasmin"){
+  document.getElementById("login").classList.add("hidden");
+  document.getElementById("birthday").classList.remove("hidden");
+  document.getElementById("error").textContent="";
+  current=0;
+  showStep();
+ }else{
+  document.getElementById("error").textContent="Incorrect password. Please try again 💜";
+ }
+});
+
+function showStep(){
+ const item=surprises[current];
+ document.getElementById("step").textContent=
+  "STEP "+(current+1)+" OF 8";
+ document.getElementById("bar").style.width=
+  ((current+1)/8*100)+"%";
+ document.getElementById("emoji").textContent=item.emoji;
+ document.getElementById("title").textContent=item.title;
+ document.getElementById("message").textContent=item.message;
+
+ const last=current===7;
+ document.getElementById("next").classList.toggle("hidden",last);
+ document.getElementById("restart").classList.toggle("hidden",!last);
+
+ if(last)celebrate();
+}
+
+document.getElementById("next").addEventListener("click",function(){
+ if(current<7){
+  current++;
+  showStep();
+ }
+});
+
+document.getElementById("restart").addEventListener("click",function(){
+ current=0;
+ showStep();
+});
+
+function celebrate(){
+ const pieces=["✨","💜","🎉","✦","🎊","★"];
+ for(let i=0;i<65;i++){
+  const c=document.createElement("span");
+  c.className="confetti";
+  c.textContent=pieces[Math.floor(Math.random()*pieces.length)];
+  c.style.left=Math.random()*100+"vw";
+  c.style.animationDuration=(2+Math.random()*4)+"s";
+  c.style.fontSize=(14+Math.random()*20)+"px";
+  document.body.appendChild(c);
+  setTimeout(()=>c.remove(),6500);
+ }
+}
+</script>
+</body>
+  </html>
